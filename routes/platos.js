@@ -9,6 +9,16 @@ router.get("/", (req, res) => {
     res.json(rows);
   });
 });
+//Obtener los platos de una categoria
+router.get("/categoria/:id", (req, res) => {
+  const { id } = req.params;
+  const query = `SELECT * FROM platos WHERE categoria_id = ?`;
+
+  db.all(query, [id], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(rows);
+  });
+});
 
 //obtener un plato por ID
 router.get("/:id", (req, res) => {
@@ -27,12 +37,10 @@ router.post("/", (req, res) => {
   const { nombre, precio, descripcion, categoria_id } = req.body;
 
   if (!nombre || precio == null || !categoria_id || !descripcion) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "Faltan campos obligatorios: nombre, precio, descripcion o categoria_id",
-      });
+    return res.status(400).json({
+      error:
+        "Faltan campos obligatorios: nombre, precio, descripcion o categoria_id",
+    });
   }
 
   db.run(
@@ -51,12 +59,10 @@ router.put("/:id", (req, res) => {
   const { nombre, precio, descripcion, categoria_id } = req.body;
 
   if (!nombre || precio == null || !categoria_id || !descripcion) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "Faltan campos obligatorios: nombre, precio, descripcion o categoria_id",
-      });
+    return res.status(400).json({
+      error:
+        "Faltan campos obligatorios: nombre, precio, descripcion o categoria_id",
+    });
   }
 
   db.run(
