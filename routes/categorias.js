@@ -21,13 +21,21 @@ router.get("/:id", (req, res) => {
   });
 });
 
-//crear una categoría POST
+// crear una categoría (POST)
 router.post("/", (req, res) => {
-  const { nombre, descripcion } = req.body;
+  // aceptamos 'tipo' o 'descripcion' en el body (compatibilidad)
+  const { nombre, tipo, descripcion } = req.body;
+  const tipoVal = tipo || descripcion;
+
+  if (!nombre || !tipoVal) {
+    return res
+      .status(400)
+      .json({ error: "Faltan campos obligatorios: nombre o tipo" });
+  }
 
   db.run(
     "INSERT INTO categorias (nombre, tipo) VALUES (?, ?)",
-    [nombre, descripcion],
+    [nombre, tipoVal],
     function (err) {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ message: "Categoría creada", id: this.lastID });
@@ -38,13 +46,22 @@ router.post("/", (req, res) => {
 //actualizar categoría PUT
 router.put("/:id", (req, res) => {
   const id = req.params.id;
-  const { nombre, descripcion } = req.body;
+  const { nombre, tipo, descripcion } = req.body;
+  const tipoVal = tipo || descripcion;
+
+  if (!nombre || !tipoVal) {
+    return res
+      .status(400)
+      .json({ error: "Faltan campos obligatorios: nombre o tipo" });
+  }
 
   db.run(
-    "UPDATE categorias SET nombre=?, tipo=? WHERE id=?",
-    [nombre, descripcion, id],
+    "UPDATE categorias SET nombre = ?, tipo = ? WHERE id = ?",
+    [nombre, tipoVal, id],
     function (err) {
       if (err) return res.status(500).json({ error: err.message });
+      if (this.changes === 0)
+        return res.status(404).json({ error: "Categoría no encontrada" });
       res.json({ message: "Categoría actualizada" });
     }
   );
@@ -56,6 +73,8 @@ router.delete("/:id", (req, res) => {
 
   db.run("DELETE FROM categorias WHERE id = ?", [id], function (err) {
     if (err) return res.status(500).json({ error: err.message });
+    if (this.changes === 0)
+      return res.status(404).json({ error: "Categoría no encontrada" });
     res.json({ message: "Categoría eliminada" });
   });
 });

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../database/db");
 
-//obtener todos los platos GET
+// Obtener todos los platos
 router.get("/", (req, res) => {
   db.all("SELECT * FROM platos", [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -21,9 +21,19 @@ router.get("/:id", (req, res) => {
   });
 });
 
-//crear un plato POST
+// crear un plato (POST)
 router.post("/", (req, res) => {
+  // esperamos nombre, precio, descripcion y categoria_id en el body
   const { nombre, precio, descripcion, categoria_id } = req.body;
+
+  if (!nombre || precio == null || !categoria_id || !descripcion) {
+    return res
+      .status(400)
+      .json({
+        error:
+          "Faltan campos obligatorios: nombre, precio, descripcion o categoria_id",
+      });
+  }
 
   db.run(
     "INSERT INTO platos (nombre, precio, descripcion, categoria_id) VALUES (?, ?, ?, ?)",
@@ -35,27 +45,40 @@ router.post("/", (req, res) => {
   );
 });
 
-//actualizar un plato PUT
+// actualizar un plato (PUT)
 router.put("/:id", (req, res) => {
   const id = req.params.id;
   const { nombre, precio, descripcion, categoria_id } = req.body;
+
+  if (!nombre || precio == null || !categoria_id || !descripcion) {
+    return res
+      .status(400)
+      .json({
+        error:
+          "Faltan campos obligatorios: nombre, precio, descripcion o categoria_id",
+      });
+  }
 
   db.run(
     "UPDATE platos SET nombre = ?, precio = ?, descripcion = ?, categoria_id = ? WHERE id = ?",
     [nombre, precio, descripcion, categoria_id, id],
     function (err) {
       if (err) return res.status(500).json({ error: err.message });
+      if (this.changes === 0)
+        return res.status(404).json({ error: "Plato no encontrado" });
       res.json({ message: "Plato actualizado" });
     }
   );
 });
 
-//eliminar un plato DELETE
+// eliminar un plato (DELETE)
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
 
   db.run("DELETE FROM platos WHERE id = ?", [id], function (err) {
     if (err) return res.status(500).json({ error: err.message });
+    if (this.changes === 0)
+      return res.status(404).json({ error: "Plato no encontrado" });
     res.json({ message: "Plato eliminado" });
   });
 });
