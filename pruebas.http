@@ -1,0 +1,72 @@
+Archivo de Pruebas - pruebas.http
+
+### Página de platos
+GET http://localhost:3000/platos
+
+###############################################
+# CATEGORIAS
+###############################################
+
+### Ver todas las categorías
+GET http://localhost:3000/categorias
+
+### Ver categoría específica
+GET http://localhost:3000/categorias/1
+
+### Crear nueva categoría
+POST http://localhost:3000/categorias
+Content-Type: application/json
+
+{
+"nombre": "Comida Rápida",
+"tipo": "Platos listos para servir"
+}
+
+### Actualizar categoría
+PUT http://localhost:3000/categorias/1
+Content-Type: application/json
+
+{
+"tipo": "Tipo actualizado de prueba"
+}
+
+### Eliminar categoría (sin platos asociados)
+DELETE http://localhost:3000/categorias/5
+
+
+
+###############################################
+# PLATOS
+###############################################
+
+### Ver todos los platos
+GET http://localhost:3000/platos
+
+### Ver plato específico
+GET http://localhost:3000/platos/1
+
+### Ver platos por categoría
+GET http://localhost:3000/platos/categoria/1
+
+### Crear nuevo plato
+POST http://localhost:3000/platos
+Content-Type: application/json
+
+{
+"nombre": "Hamburguesa Especial",
+"precio": 18000,
+"descripcion": "Hamburguesa de prueba para el archivo HTTP",
+"categoria_id": 1
+}
+
+### Actualizar plato
+PUT http://localhost:3000/platos/1
+Content-Type: application/json
+
+{
+"precio": 25000,
+"descripcion": "Plato actualizado desde pruebas"
+}
+
+### Eliminar plato
+DELETE http://localhost:3000/platos/5
