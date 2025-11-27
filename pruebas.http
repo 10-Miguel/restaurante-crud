@@ -1,11 +1,24 @@
-Archivo de Pruebas - pruebas.http
-
-### Página de platos
+# Página de platos
 GET http://localhost:3000/platos
 
-###############################################
-# CATEGORIAS
-###############################################
+### Un plato específico
+GET http://localhost:3000/platos/1
+
+### Todos los platos de una categoría
+GET http://localhost:3000/platos/categoria/2
+
+### Actualizar y/o crear un plato
+POST
+PUT http://localhost:3000/platos
+Content-Type: application/json
+{
+"nombre": "Ensalada César",
+"precio": 25000,
+"descripcion": "Ensalada fresca con pollo y aderezo César",
+"categoria_id": 1
+}
+
+# Página de categorías
 
 ### Ver todas las categorías
 GET http://localhost:3000/categorias
@@ -30,7 +43,7 @@ Content-Type: application/json
 "tipo": "Tipo actualizado de prueba"
 }
 
-### Eliminar categoría (sin platos asociados)
+### Eliminar categoría 
 DELETE http://localhost:3000/categorias/5
 
 
